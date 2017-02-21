@@ -5,9 +5,6 @@
         console.log("Loading markers plugin.");
         this.cockpit = cockpit;
 
-
-
-
         $('#cockpit').append('<canvas id="markersOverlay" width="800" height="600"></canvas>');
         this.markersJquery = $('#markersOverlay');
         this.canvas = this.markersJquery.get(0);
@@ -22,12 +19,11 @@
             }
         });
 
-
-
-
         $('.main-container .wrapper').append("<div id='markers'></div>");
 
-        $('#markers').append('<button id="markerson">Markers On</button>');
+        $('#markers').append('<div><button id="config">config: </button><input value="detect:enemy_colors" id="key"/><input value="3" size="3" id="value"/></div>');
+        $('#markers').append('<button id="roundel">Roundel</button>');
+        $('#markers').append('<button id="tags">tags</button>');
         $('#markers').append('<div>counter: <span id="counter">0</span></div>');
         $('#markers').append('<div>nbDetected: <span id="nbDetected">0</span></div>');
         $('#markers').append('<div>type: <span id="type">0</span></div>');
@@ -82,18 +78,18 @@
                 theta = -1 * theta * Math.PI / 180;
                 var dx = r * Math.cos(theta) * .5;
                 var dy = r * Math.sin(theta) * .5
-                var pdx = r * Math.cos(theta+Math.PI*.5);
-                var pdy = r * Math.sin(theta+Math.PI*.5)
+                var pdx = r * Math.cos(theta + Math.PI * .5);
+                var pdy = r * Math.sin(theta + Math.PI * .5)
                 var r = 60;
                 r *= 125 / dist
                 this.ctx.arc(x1, y1, r, 0, 2 * Math.PI);
                 this.ctx.lineWidth = 10;
                 this.ctx.moveTo(x1 - dx, y1 - dy);
                 this.ctx.lineTo(x1 + dx, y1 + dy)
-                var lcx = x1+5*dx;
-                var lcy = y1+5*dy
-                this.ctx.moveTo(lcx+pdx, lcy+pdy);
-                this.ctx.lineTo(lcx-pdx,lcy-pdy)
+                var lcx = x1 + 5 * dx;
+                var lcy = y1 + 5 * dy
+                this.ctx.moveTo(lcx + pdx, lcy + pdy);
+                this.ctx.lineTo(lcx - pdx, lcy - pdy)
                 this.ctx.fill()
                 this.ctx.stroke()
             }
@@ -103,21 +99,46 @@
         console.log("markers listen")
         var markers = this;
 
-        $('#markerson').click(function(ev) {
-            console.log('marker clicked')
+
+        $('#config').click(function(ev) {
+            console.log('config clicked')
+            ev.preventDefault();
+            var theKey = $('#key').val();
+            var theValue = $('#value').val();
+            markers.config(theKey,theValue);
+        });
+        $('#roundel').click(function(ev) {
+            console.log('roundel clicked')
             ev.preventDefault();
             markers.detect(12);
         });
-
+        $('#tags').click(function(ev) {
+            console.log('tags clicked')
+            ev.preventDefault();
+            markers.tags(5);
+        });
 
     };
+    Markers.prototype.config = function config(theKey,theValue) {
+        console.log('config',theKey,theValue)
+        this.cockpit.socket.emit("/markers/config", {
+            theKey:theKey,
+            theValue:theValue
+        });
+    };
+
     Markers.prototype.detect = function detect(deviceNum) {
         console.log('detect')
         this.cockpit.socket.emit("/markers/detect", {
             device_num: deviceNum
         });
     };
-
+    Markers.prototype.tags = function detect(deviceNum) {
+        console.log('detect')
+        this.cockpit.socket.emit("/markers/tags", {
+            device_num: deviceNum
+        });
+    };
     window.Cockpit.plugins.push(Markers);
 
 }(window, document, jQuery));
