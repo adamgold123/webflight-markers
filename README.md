@@ -14,27 +14,27 @@ markers repos:
 
 ```
 git clone git://github.com/eschnou/ardrone-webflight.git
-git clone git clone https://github.com/seattleacademy/webflight-markers.git
+git clone https://github.com/seattleacademy/webflight-markers.git
 ```
 
 Run `npm install` for each:
 
 ```
-(cd ardrone-webflight && npm install)
 (cd webflight-markers && npm install)
+(cd ../ardrone-webflight && npm install)
 ```
 
-Plus `bower install` for webflight:
+Plus `bower install` for webflight in the ardrone-webflight directory:
 
 ```
 sudo npm install -g bower
-(cd ardrone-webflight && bower install)
+bower install
 ```
 
 Link `webflight-markers` into webflight's `plugins` directory:
 
 ```
-(cd ardrone-webflight/plugins && ln -s ../../webflight-markers markers)
+(cd plugins && ln -s ../../webflight-markers markers)
 ```
 
 Copy ardrone-webflight's `config.js.example` to `config.js`:
